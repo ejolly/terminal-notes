@@ -24,28 +24,29 @@ import click
 def note_writer(archive, archive_all, note, filepath, edit):
     """Simple program to add or show notes from a file. Works entirely through command flags. Removed notes are deleted from the file so there is no history of completed items!"""
 
-    file_path = "/Users/Esh/Documents/.click_notes.txt"
-    p = Path(file_path)
-
+    p = Path.home() / ".click_notes.txt"
     if not p.exists():
         print("No notes file found...creating")
         p.touch()
+
+    # If -f is passed just print the location to the file and exit
     if filepath:
-        # If -f is passed just print the location to the file and exit
         click.echo(f"Notes file is here: {p.absolute()}")
         return
+
     # Otherwise always read the notes file first
     with open(p, "r") as f:
         lines = f.readlines()
+
+    # If no note text is passed and no archival flags are provided just print all notes
     if not note:
-        # If no note text is passed and no archival flags are provided just print all notes
         if not isinstance(archive, int) and not archive_all:
             if lines:
                 click.echo("📌 You were doing...")
                 for i, line in enumerate(lines):
                     print(f"{i}) {line}", end="")
+        # If no note text is passed but archival flags are passed, remove the requested lines
         else:
-            # If no note text is passed but archival flags are passed, remove the requested lines
             with open(p, "w") as f:
                 if isinstance(archive, int):
                     for i, line in enumerate(lines):
@@ -54,9 +55,9 @@ def note_writer(archive, archive_all, note, filepath, edit):
                 elif archive_all:
                     f.truncate()
                     click.echo("All notes cleared!")
+    # If the edit flag is passed rewrite that specific line
     else:
         to_write = f"{' '.join(note)}\n"
-        # If the edit flag is passed rewrite that specific line
         if isinstance(edit, int):
             with open(p, "w") as f:
                 for i, line in enumerate(lines):
@@ -64,9 +65,9 @@ def note_writer(archive, archive_all, note, filepath, edit):
                         f.write(to_write)
                     else:
                         f.write(line)
+        # Otherwise just append to the end of the file
         else:
             with open(p, "a") as f:
-                # Otherwise just append to the end of the file
                 f.write(to_write)
 
 
