@@ -42,9 +42,10 @@ def note_writer(archive, archive_all, note, filepath, edit):
     if not note:
         if not isinstance(archive, int) and not archive_all:
             if lines:
-                click.echo("📌 You were doing...")
+                click.secho("📌 You were doing...", fg="magenta", bold=True, underline=True)
                 for i, line in enumerate(lines):
-                    print(f"{i}) {line}", end="")
+                    click.secho(f"{i}. ", nl=False, fg="magenta", bold=True)
+                    click.secho(f"{line}", nl=False)
         # If no note text is passed but archival flags are passed, remove the requested lines
         else:
             with open(p, "w") as f:
